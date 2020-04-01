@@ -1,0 +1,221 @@
+{% extends "index.html" %}
+{% block title %}{{ name }}{% endblock %}
+{% block content %}
+
+
+    <section class="content">
+
+            <div class="row">
+                <!-- left column -->
+
+                <div class="col-md-6">
+
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Caracteristicas del producto</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="input-group mb-3">
+                                <div class="input-group-prepend">
+                                    <span class="input-group-text">Nombre</span>
+                                </div>
+                                <input type="text" class="form-control"  name="name" required>
+                            </div>
+
+                            <div class="input-group mb-3">
+                                <input type="text" class="form-control"   name="id"
+                                       required>
+                                <div class="input-group-append">
+                                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <input type="number" class="form-control" name='total_quantity'
+                                        id="quantity_available" step="1" min="1">
+                            </div>
+                            <div class="input-group">
+                                <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"></i>
+                                </span>
+                                </div>
+                                <input type="text" class="form-control" name="cost_price" required=""
+                                       placeholder="Precio compra"  required>
+                            </div>
+                            <div class="form-group">
+                                <label>Descripcion del producto</label>
+                                <textarea class="form-control" style="resize:none" name='description' rows="3"
+                                          style="height: 101px;"></textarea>
+
+                            </div>
+                            <div class="card-footer">
+
+                                <button type="submit" onclick="addProduct()" class="btn btn-primary">Guardar</button>
+                            </div>
+
+
+                            <!-- /input-group -->
+                        </div>
+                        <!-- /.card-body -->
+                    </div>
+                    <!-- /.card -->
+                    <!-- Horizontal Form -->
+
+                    <!-- /.card -->
+
+                </div>
+                <!--/.col (left) -->
+                <!-- right column -->
+                <div class="col-md-6">
+                    <!-- general form elements disabled -->
+                    <div class="card card-info">
+                        <div class="card-header">
+                            <h3 class="card-title">Precios por mayoreo</h3>
+                        </div>
+                        <!-- /.card-header -->
+                        <div class="card-body" id="prices_section">
+
+                                <div class="row">
+                                    <div class="col-sm-6">
+                                        <!-- text input -->
+                                        <div class="form-group">
+                                            <label>Precio 1</label>
+
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" name="price_0"
+                                                       value="1">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Cantidad 1</label>
+                                            <input type="text" class="form-control" name="quantity_0" id="quantity_0" disabled=""
+                                                   value="1">
+
+                                        </div>
+
+                                    </div>
+                                </div>
+
+
+                        </div>
+                        <div class="card-body">
+                            <div class="float-right">
+
+
+                                        <button class="btn btn-danger" onclick="removePrice()">Eliminar precio</button>
+
+                                </div>
+                                <div class="float-left">
+
+
+                                        <button class="btn btn-success" onclick="addPrice()">Agregar precio</button>
+
+                                </div>
+                        </div>
+                        <!-- /.card-body -->
+
+
+                    </div>
+                    <!-- /.card -->
+                    <!-- general form elements disabled -->
+
+                    <!-- /.card -->
+                </div>
+                <!--/.col (right) -->
+            </div>
+
+    </section>
+{% endblock %}
+
+{% block javascript %}
+<script>
+        $(document).ready(function() {
+            $('#quantity_0').inputSpinner();
+        });
+     const addProduct =  () => {
+
+         let counter = 0;
+         var jsonData = {};
+
+         $(".card-body :input").each(function () {
+            if (this.value != "" && this.name != ""){
+                jsonData[this.name] = this.value;
+
+            }});
+
+            $.ajax({
+
+            type:"post",
+            dataType:"json",
+            url: "/products/add/",
+            contentType: "application/json",
+            data: JSON.stringify(jsonData),
+            success: function(data) {
+
+                location.replace("/products/show");
+            },
+            error: function(data) {
+                successmessage = 'Error';
+                $("label#successmessage").text(successmessage);
+            },
+        });
+
+  };
+
+     const addPrice = () => {
+
+         let index = $("#prices_section").children().length;
+
+        $('#prices_section').append(`<div class="row">
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Precio ${index}</label>
+
+                                            <div class="input-group">
+                                                <div class="input-group-prepend">
+                                    <span class="input-group-text">
+                                    <i class="fas fa-dollar-sign"></i>
+                                    </span>
+                                                </div>
+                                                <input type="text" class="form-control" name="price_${index}" id="price_${index}"
+                                                       value="1" required>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="col-sm-6">
+                                        <div class="form-group">
+                                            <label>Cantidad ${index}</label>
+                                            <input type="number" class="form-control" name="quantity_${index}" id="quantity_${index}"
+                                                   value="1" required>
+
+                                        </div>
+
+                                    </div>
+                                </div>`);
+
+        $(`#quantity_${index}`).inputSpinner();
+
+
+     };
+
+     const removePrice = () => {
+         let size = $("#prices_section").children().length;
+         console.log(size);
+         if( size > 1){
+            $("#prices_section").children().eq(size-1).remove();
+         }
+
+
+     }
+
+
+</script>
+
+{% endblock %}

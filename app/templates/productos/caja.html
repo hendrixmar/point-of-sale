@@ -1,0 +1,148 @@
+{% extends "index.html" %}
+{% block title %}{{name}}{% endblock %}
+{% block content %}
+
+
+<section class="content">
+<form role="form" method="post" action="/asd">
+<div class="row">
+          <!-- left column -->
+
+          <div class="col-md-6">
+
+            <div class="card card-info">
+              <div class="card-header">
+                <h3 class="card-title">Caracteristicas del producto</h3>
+              </div>
+              <div class="card-body">
+                <div class="input-group mb-3">
+                  <div class="input-group-prepend">
+                    <span class="input-group-text">Nombre</span>
+                  </div>
+                  <input type="text" class="form-control" placeholder="producto" name="name" required>
+                </div>
+
+                <div class="input-group mb-3">
+                  <input type="text" class="form-control" placeholder="codigo de barras" name="id" required>
+                  <div class="input-group-append">
+                    <span class="input-group-text"><i class="fas fa-barcode"></i></span>
+                  </div>
+                </div>
+                  <div class="form-group">
+                        <input type="number" class="form-control" placeholder="Cantidad disponible" id="quantity_available" step="1" min="1">
+                  </div>
+
+                  <div class="form-group">
+                        <label>Descripcion del producto</label>
+                        <textarea class="form-control" style="resize:none" rows="3" placeholder="Describe ..." style="height: 101px;"></textarea>
+
+                  </div>
+
+
+
+                <!-- /input-group -->
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+            <!-- Horizontal Form -->
+
+            <!-- /.card -->
+
+          </div>
+          <!--/.col (left) -->
+          <!-- right column -->
+         <div class="col-md-6">
+            <!-- general form elements disabled -->
+            <div class="card card-warning">
+              <div class="card-header">
+                <h3 class="card-title">Precios por mayoreo</h3>
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body">
+
+                  <div class="row">
+                    <div class="col-sm-6">
+                      <!-- text input -->
+                      <div class="form-group">
+                        <label>Precio 1</label>
+
+                        <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" name="price_0">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Cantidad 1</label>
+                        <input type="text" class="form-control" name="quantity_0" placeholder="Ingrese ...">
+                      </div>
+                    </div>
+                  </div>
+
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <!-- text input -->
+                      <div class="form-group">
+                        <label>Precio 2</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" name="price_1">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Cantidad 2</label>
+                        <input type="text" class="form-control" name="quantity_1" placeholder="Ingrese ...">
+                      </div>
+                    </div>
+                  </div>
+                    <div class="row">
+                    <div class="col-sm-6">
+                      <!-- text input -->
+                      <div class="form-group">
+                        <label>Precio 3</label>
+                          <div class="input-group">
+                            <div class="input-group-prepend">
+                                <span class="input-group-text">
+                                <i class="fas fa-dollar-sign"></i>
+                                </span>
+                            </div>
+                            <input type="text" class="form-control" name="price_2">
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-sm-6">
+                      <div class="form-group">
+                        <label>Cantidad 3</label>
+                        <input type="text" class="form-control" name="quantity_2" placeholder="Ingrese ...">
+                      </div>
+                    </div>
+                  </div>
+
+              </div>
+              <!-- /.card-body -->
+                <div class="card-footer">
+                  <button type="submit" class="btn btn-primary">Submit</button>
+                </div>
+            </div>
+            <!-- /.card -->
+            <!-- general form elements disabled -->
+
+            <!-- /.card -->
+          </div>
+          <!--/.col (right) -->
+        </div>
+</form>
+</section>
+{% endblock %}

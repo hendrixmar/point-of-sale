@@ -1,0 +1,340 @@
+{% extends "index.html" %}
+{% block content %}
+    <div class="row">
+        <div class="col-sm-7">
+                 <div class="card">
+<div class="card-body">
+               <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th width="20%">Nombre del producto</th>
+                        <th width="10%">Codigo de barra</th>
+                        <th width="10%">Cantidad disponible</th>
+                        <th width="15%">Precios</th>
+
+                        <th width="10%">opciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for product in products %}
+
+                        <tr id="{{product.id }}">
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.quantity }}</td>
+
+                            <td>
+                                <div class="container">
+                                    <button type="button" class="btn btn-block btn-info btn-sm"
+                                            data-toggle="collapse"
+                                            data-target="#prices{{ loop.index }}">Mostrar
+                                    </button>
+                                    <div id="prices{{ loop.index }}" class="collapse">
+
+                                        <table class="table table-responsive w-100 d-block d-md-table">
+                                            <tr>
+                                                <th>Precio</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                            {% for element in product.prices %}
+                                                <tr>
+                                                    <td>{{ element.price }} </td>
+                                                    <td>{{ element.quantity }}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="btn-group">
+                                    <button class="btn btn-success"  onclick="add({{ product.id }})">Agregar</button>
+
+                                </div>
+
+
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Nombre del producto</th>
+                        <th>Codigo de barra</th>
+                        <th>Cantidad disponible</th>
+                        <th>Precio</th>
+
+                        <th>opciones</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </div>
+        </div>
+        </div>
+        <div class="col-sm-5">
+            <div class="small-box bg-info">
+                <input  class="form-control" name="quantity_2" placeholder="Ingrese ..." id="myInput"
+                       type="hidden">
+                <div class="inner">
+                    <h3 id="total">$0</h3>
+
+                    <p>New Orders</p>
+
+                </div>
+                <div class="icon">
+                    <i class="fas fa-shopping-cart"></i>
+                </div>
+                <a onclick="send()" class="small-box-footer" href="">
+                    Registrar venta <i class="fas fa-money-bill"></i>
+                </a>
+            </div>
+
+            <div class="row">
+          <div class="col-12">
+            <div class="card">
+              <div class="card-header">
+                <h3 class="card-title">Articulos agregados</h3>
+
+
+              </div>
+              <!-- /.card-header -->
+              <div class="card-body table-responsive p-0">
+                <table class="table table-hover" id="billing">
+                  <thead>
+                    <tr>
+                      <th>Nombre</th>
+                      <th>Cantidad</th>
+                      <th>Precio</th>
+                        <th>#</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+
+                  </tbody>
+                </table>
+              </div>
+              <!-- /.card-body -->
+            </div>
+            <!-- /.card -->
+          </div>
+        </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block javascript %}
+
+    <script>
+
+    let products = {};
+    let total = 0.0;
+
+    const quantity = {};
+
+
+    function isNumeric(num){
+        return !isNaN(num)
+    }
+
+    let input = document.getElementById("myInput");
+    input.addEventListener("keyup", function(event) {
+        if (event.keyCode === 13) {
+            event.preventDefault();
+
+            let inputVal = parseInt(document.getElementById("myInput").value);
+
+            // if the input is numeric and is not already requested
+
+            if(isNumeric(inputVal) && !(inputVal in products)){
+
+                $.ajax({
+
+                    type:"get",
+                    dataType:"json",
+                    url: `/product/get/${inputVal}`,
+                    contentType: "application/json",
+
+                    success: function(data){
+                                    products[inputVal] = data;
+                                    products[inputVal].prices.sort((a,b) =>  a[1] < b[1] ? -1 : 1);
+                                    quantity[inputVal] = 1;
+                                    var table = document.getElementById("tabla");
+                                    var row = table.insertRow(table.rows.length);
+                                    console.log(table.rows.length);
+                                    row.id = data['id'];
+                                    var cell1 = row.insertCell(0);
+                                    var cell2 = row.insertCell(1);
+                                    var cell3 = row.insertCell(2);
+                                    var cell4 = row.insertCell(3);
+                                    var cell5 = row.insertCell(4);
+
+                                    cell1.innerHTML = data['id'];
+                                    cell2.innerHTML = data['name'];
+                                    cell3.innerHTML = "$"+data['prices'][0][0];
+                                    cell4.innerHTML = `<input type="number" value="1" min="1" max="${data['quantity']}" step="1" id="B${inputVal}" />`;
+                                    cell5.innerHTML =  `<div class="btn-group"> <a class="btn btn-danger" onclick="erase(${data['id']})" href="#">Eliminar</a> </div>`;
+
+                                    let $changedInput = $(`#B${inputVal}`);
+                                     price_check();
+
+
+                                    $(`#B${inputVal}`).on("input", function (event) {
+
+                                        alert(inputVal+"yeahyeah");
+                                        quantity[inputVal] = parseInt($changedInput.val());
+
+                                        price_check();
+                                    });
+                                     $(`#B${inputVal}`).inputSpinner();
+
+                    },
+                    error:  function(data){
+                             toastr.warning("El articulo no existe")
+
+                    }});
+
+
+
+
+            }else if (inputVal in products && quantity[inputVal] <=  products[inputVal].quantity ){
+
+                quantity[inputVal]++;
+
+                let $changedInput = $(`#B${inputVal}`);
+                $changedInput.val(`${quantity[inputVal]}`);
+
+                price_check();
+
+            }
+
+        }});
+
+    const price_check = () =>{
+
+        let temp = 0;
+
+        Object.keys(quantity).forEach((key) =>{
+
+
+            let numberPrices = products[key].length - 1;
+            for (let i = 0; i < numberPrices; i++) {
+
+                if(  products[key][i][1] <= quantity[key] &&  quantity[key] < products[key][i+1][1] ){
+
+                    temp += quantity[key] * products[key][i][0];
+
+                    break;
+                }
+            }
+
+        });
+
+        total = temp;
+        $(`#total`).text (`$${temp}`);
+    };
+
+    const erase = (id) => {
+        delete quantity[id];
+        delete products[id];
+        $( `#billing #${id}`).remove();
+
+        price_check();
+    };
+
+const send =  () => {
+
+
+    $.ajax({
+
+            type:"post",
+            dataType:"json",
+            url: "/make_sale",
+            contentType: "application/json",
+            data: JSON.stringify(quantity),
+            success: function(data) {
+
+                location.replace("/");
+            },
+            error: function(data) {
+                successmessage = 'Error';
+                $("label#successmessage").text(successmessage);
+            },
+        });
+
+    event.preventDefault();
+
+}
+
+$('#example1').on( 'search.dt', function (e, settings) {
+
+//    alert(e.metaKey);
+
+    
+
+
+});
+
+
+const add = (id) => {
+
+    alert(id);
+    if (id in quantity){
+        quantity[id] += 1;
+    }else{
+        quantity[id] = 1;
+    }
+
+    price_check();
+    let numberPrices = products[id].prices.length - 1;
+    let price;
+    for (let i = 0; i < numberPrices; i++) {
+
+        if(  products[id].prices[i][1] <= quantity[id] &&  quantity[id] < products[id].prices[i+1][1] ){
+
+            price = products[id].prices[i][0];
+
+            break;
+        }
+    }
+    let temp = `<tr id="${id}">
+                      <td>${products[id].name}</td>
+                      <td>${products[id].quantity}</td>
+                      <td>$${price}.00</td>
+                        <td><button type="button" class="btn btn-block bg-gradient-danger btn-xs" onclick="erase(${id})">delete</button></td>
+                    </tr>`
+    
+    $('#billing tr:last').after(temp);
+}
+$(document).ready(function() {
+    var oTable = $('#example1').dataTable( {
+
+        } );
+
+    $.ajax({
+
+            type:"get",
+            dataType:"json",
+            url: "/products/json",
+            contentType: "application/json",
+
+            success: function(data){
+                        products = data;
+
+            },
+            error:  function(data){
+                     toastr.warning("Error en la base de datos");
+
+            }});
+});
+
+</script>
+
+
+{% endblock %}

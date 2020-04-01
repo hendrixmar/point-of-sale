@@ -1,0 +1,116 @@
+{% extends "index.html" %}
+
+
+
+
+{% block content %}
+    <div class="card">
+        <div class="card-header">
+            <h3 class="card-title">Lista de productos</h3>
+        </div>
+        <!-- /.card-header -->
+        <div class="card-body">
+            <form method="get">
+                <table id="example1" class="table table-bordered table-striped">
+                    <thead>
+                    <tr>
+                        <th width="20%">Nombre del producto</th>
+                        <th width="10%">Codigo de barra</th>
+                        <th width="5%">Cantidad disponible</th>
+                        <th width="20%">Precios</th>
+                        <th width="30%">Descripcion</th>
+                        <th width="10%">opciones</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+
+                    {% for product in products %}
+
+                        <tr>
+                            <td>{{ product.name }}</td>
+                            <td>{{ product.id }}</td>
+                            <td>{{ product.quantity }}</td>
+
+                            <td>
+                                <div class="container">
+                                    <button type="button" class="btn btn-block btn-success btn-sm"
+                                            data-toggle="collapse"
+                                            data-target="#prices{{ loop.index }}">Coste: ${{ product.cost_price }}
+                                    </button>
+                                    <div id="prices{{ loop.index }}" class="collapse">
+
+                                        <table class="table table-responsive w-100 d-block d-md-table">
+                                            <tr>
+                                                <th>Precio</th>
+                                                <th>Cantidad</th>
+                                            </tr>
+                                            {% for element in product.prices %}
+                                                <tr>
+                                                    <td>{{ element.price }} </td>
+                                                    <td>{{ element.quantity }}</td>
+
+                                                </tr>
+                                            {% endfor %}
+                                        </table>
+                                    </div>
+
+                                </div>
+                            </td>
+                            <td>
+                                <p>
+
+                                    <button class="btn btn-info btn-sm" type="button" data-toggle="collapse"
+                                            data-target="#collapseExample{{ loop.index }}" aria-expanded="false"
+                                            aria-controls="collapseExample">
+                                        Mostrar
+                                    </button>
+                                </p>
+                                <div class="collapse" id="collapseExample{{ loop.index }}">
+                                    <div class="card card-body">
+                                        {{ product.description }}
+                                    </div>
+                                </div>
+                            </td>
+                            <td>
+                                <div class="btn-group">
+                                    <a class="btn btn-warning" href="/products/edit/{{ product.id }}" >Editar</a>
+                                    <a class="btn btn-danger" href="/products/delete/{{ product.id }}" >Eliminar</a>
+                                </div>
+
+
+                            </td>
+                        </tr>
+
+                    {% endfor %}
+
+
+                    </tbody>
+                    <tfoot>
+                    <tr>
+                        <th>Nombre del producto</th>
+                        <th>Codigo de barra</th>
+                        <th>Cantidad disponible</th>
+                        <th>Precio</th>
+                        <th>Descripcion</th>
+                        <th>opciones</th>
+                    </tr>
+                    </tfoot>
+                </table>
+            </form>
+
+        </div>
+
+    </div>
+{% endblock %}
+
+{%block javascript %}
+    <script>
+$(document).ready(function() {
+    var oTable = $('#example1').dataTable( {
+        select : true
+        } );});
+
+
+$('#yourDivName').append('yourtHTML');
+</script>
+{% endblock %}
